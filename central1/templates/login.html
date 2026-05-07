@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Табель учёта</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🔐 Вход для руководителя</h1>
+        <div class="card">
+            <form action="/dashboard" method="get">
+                <label>Выберите руководителя:</label>
+                <select name="user_id" required>
+                    <option value="">— Выберите —</option>
+                    <option value="1">Руководитель Иванов</option>
+                    <option value="2">Руководитель Петров</option>
+                </select>
+                <button type="submit" class="btn btn-start">Войти</button>
+            </form>
+        </div>
+        <p style="text-align: center; margin-top: 16px;">
+            <a href="/">← Сотрудник (отметка времени)</a>
+        </p>
+    </div>
+</body>
+</html>

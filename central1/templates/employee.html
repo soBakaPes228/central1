@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Сотрудник — учёт времени</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>👷 Учёт рабочего времени</h1>
+
+        {% if message %}
+        <div class="alert">{{ message }}</div>
+        {% endif %}
+
+        <div class="card">
+            <h2>▶ Начать работу</h2>
+            <form action="/employee/start" method="post">
+                <label>Сотрудник:</label>
+                <select name="user_id" required>
+                    <option value="">— Выберите —</option>
+                    {% for u in users %}
+                    <option value="{{ u.user_id }}">{{ u.full_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <label>Проект:</label>
+                <select name="project_id" required>
+                    <option value="">— Выберите —</option>
+                    {% for p in projects %}
+                    <option value="{{ p.project_id }}">{{ p.name }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-start">Начать работу</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>⏹ Закончить работу</h2>
+            <form action="/employee/stop" method="post">
+                <label>Сотрудник:</label>
+                <select name="user_id" required>
+                    <option value="">— Выберите —</option>
+                    {% for u in users %}
+                    <option value="{{ u.user_id }}">{{ u.full_name }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn btn-stop">Закончить работу</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

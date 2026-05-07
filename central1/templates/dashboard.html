@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дашборд — Табель учёта</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 16px;
+        }
+        th, td {
+            padding: 10px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+            font-size: 14px;
+        }
+        th {
+            background: #1E3A5F;
+            color: #fff;
+            cursor: pointer;
+        }
+        tr:hover {
+            background: #f5f7fa;
+        }
+        .filters {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: end;
+            margin-bottom: 16px;
+        }
+        .filters div {
+            flex: 1;
+            min-width: 150px;
+        }
+        .filters label {
+            margin-top: 0;
+        }
+        .btn-sm {
+            padding: 10px 16px;
+            font-size: 14px;
+            width: auto;
+        }
+        .btn-export {
+            background: #4A90D9;
+        }
+        .btn-reset {
+            background: #6c757d;
+        }
+        .empty {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+        }
+        @media (max-width: 768px) {
+            .filters {
+                flex-direction: column;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" style="max-width: 1100px;">
+        <h1>📊 Дашборд руководителя</h1>
+
+        <div class="card">
+            <form method="get" action="/dashboard">
+                <div class="filters">
+                    <div>
+                        <label>Проект:</label>
+                        <select name="project_id">
+                            <option value="">Все проекты</option>
+                            {% for p in projects %}
+                            <option value="{{ p.project_id }}" {% if selected_project == p.project_id %}selected{% endif %}>
+                                {{ p.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div>
+                        <label>Дата с:</label>
+                        <input type="date" name="date_from" value="{{ date_from }}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                    </div>
+                    <div>
+                        <label>Дата по:</label>
+                        <input type="date" name="date_to" value="{{ date_to }}" style="width:100%; padding:10px; border:1px solid #ccc; border-radius:6px;">
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                        <button type="submit" class="btn btn-start btn-sm">🔍 Фильтровать</button>
+                        <a href="/dashboard" class="btn btn-reset btn-sm" style="text-decoration:none; text-align:center; color:#fff;">Сбросить</a>
+                    </div>
+                </div>
+            </form>
+
+            <a href="/export?project_id={{ selected_project or '' }}&date_from={{ date_from }}&date_to={{ date_to }}" class="btn btn-export btn-sm" style="display:inline-block; text-decoration:none;">📥 Скачать Excel</a>
+
+            {% if records %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>ФИО</th>
+                        <th>Проект</th>
+                        <th>Дата</th>
+                        <th>Начало</th>
+                        <th>Конец</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in records %}
+                    <tr>
+                        <td>{{ r.full_name }}</td>
+                        <td>{{ r.project or '—' }}</td>
+                        <td>{{ r.date }}</td>
+                        <td>{{ r.start_time or '—' }}</td>
+                        <td>{{ r.end_time or '⏳ не завершено' }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+            <div class="empty">Нет данных для отображения</div>
+            {% endif %}
+        </div>
+
+        <p style="text-align: center; margin-top: 16px;">
+            <a href="/">← Страница сотрудника</a>
+        </p>
+    </div>
+</body>
+</html>
