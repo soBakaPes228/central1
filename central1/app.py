@@ -2,9 +2,17 @@ from fastapi import FastAPI, Request, Form, Query
 from fastapi.responses import HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 import os
 from database.init_db import get_connection, init_db
+
+MSK = timezone(timedelta(hours=3))
+
+def now_msk():
+    return datetime.now(MSK)
+
+def today_msk():
+    return datetime.now(MSK).strftime("%Y-%m-%d")
 
 app = FastAPI()
 
@@ -37,11 +45,10 @@ def employee_start(
     project_id: int = Form(...)
 ):
     conn = get_connection()
-    now = datetime.now()
-    today = now.strftime("%Y-%m-%d")
+    now = now_msk()
+    today = today_msk()
     time = now.strftime("%H:%M:%S")
 
-    # Проверка на незакрытую запись
     open_record = conn.execute(
         "SELECT * FROM time_records WHERE user_id = ? AND end_time IS NULL AND date = ?",
         (user_id, today)
@@ -79,8 +86,8 @@ def employee_stop(
     user_id: int = Form(...)
 ):
     conn = get_connection()
-    now = datetime.now()
-    today = now.strftime("%Y-%m-%d")
+    now = now_msk()
+    today = today_msk()
     time = now.strftime("%H:%M:%S")
 
     open_record = conn.execute(
@@ -214,7 +221,7 @@ def export_excel(
         ws.cell(row=row_idx, column=4, value=r["start_time"] or "—")
         ws.cell(row=row_idx, column=5, value=r["end_time"] or "не завершено")
 
-    filename = f"otchet_{datetime.now().strftime('%Y-%m-%d')}.xlsx"
+    filename = f"otchet_{now_msk().strftime('%Y-%m-%d')}.xlsx"
     filepath = os.path.join(os.path.dirname(__file__), filename)
     wb.save(filepath)
 
